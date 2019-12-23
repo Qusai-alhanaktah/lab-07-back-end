@@ -65,20 +65,19 @@ function getWeatherData(lat,lng){
     const weatherUrl = `https://api.darksky.net/forecast/${DARKSKY_API_KEY}/${lat},${lng}`;
     return superagent.get(weatherUrl)
     .then((weatherData) =>{
-        console.log(weatherData.body.daily.data);
         let weather = weatherData.body.daily.data.map((day) => new Weather(day));
         return weather;
     });
 }
 // ///////////////////////////
-server.get('/eventful', eventfulRndering);
 
 //     {
-//       "link": "http://seattle.eventful.com/events/seattle-code-101-explore-software-development-/E0-001-126675997-3?utm_source=apis&utm_medium=apim&utm_campaign=apic",
-//       "name": "Seattle Code 101: Explore Software Development",
-//       "event_date": "Sat Dec 7 2019",
-//       "summary": "Thinking about a new career in software development? Start here! In this one-day workshop, you&#39;ll get a taste of a day in the life of a software developer. Code 101 helps you learn what it’s like to be a software developer through a day-long immersive course for beginners that focuses on front-end web development technologies. "
-//     },
+    //       "link": "http://seattle.eventful.com/events/seattle-code-101-explore-software-development-/E0-001-126675997-3?utm_source=apis&utm_medium=apim&utm_campaign=apic",
+    //       "name": "Seattle Code 101: Explore Software Development",
+    //       "event_date": "Sat Dec 7 2019",
+    //       "summary": "Thinking about a new career in software development? Start here! In this one-day workshop, you&#39;ll get a taste of a day in the life of a software developer. Code 101 helps you learn what it’s like to be a software developer through a day-long immersive course for beginners that focuses on front-end web development technologies. "
+    //     },
+    server.get('/eventful', eventfulRndering);
 
 function Eventful(eventData) {
     this.link  = eventData[0].link;                                                                                                                                               
@@ -95,11 +94,12 @@ function eventfulRndering(request, response) {
         });
 }
 function getEventfulData(city) {
-    const eventfulUrl = `http://api.eventful.com/json/events/search?app_key=${EVENTFUL_API_KEY}&location=${city}/limit=1`;
+    const eventfulUrl = `http://api.eventful.com/json/events/search?app_key=${EVENTFUL_API_KEY}&location=${city}`;
     return superagent.get(eventfulUrl)
-        .then((data) => {
-            // console.log(data.body)
-            const eventful = new Eventful(data.body);
+    console.log(eventfulUrl)
+        .then((eventfilData) => {
+            const eventful = eventfilData.map((day) => new Eventful(eventfilData));
+
             return eventful;
         });
 }
