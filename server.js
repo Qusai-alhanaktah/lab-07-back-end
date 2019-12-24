@@ -41,7 +41,7 @@ function getLocationData(city) {
     const locationUrl = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${city}&format=json&limit=1`;
     return superagent.get(locationUrl)
         .then((data) => {
-            console.log(data.body)
+            // console.log(data.body)
             const location = new Location(city, data.body);
             return location;
         });
@@ -77,17 +77,17 @@ function getWeatherData(lat,lng){
     //       "event_date": "Sat Dec 7 2019",
     //       "summary": "Thinking about a new career in software development? Start here! In this one-day workshop, you&#39;ll get a taste of a day in the life of a software developer. Code 101 helps you learn what it’s like to be a software developer through a day-long immersive course for beginners that focuses on front-end web development technologies. "
     //     },
-    server.get('/eventful', eventfulRndering);
+    server.get('/events', eventfulRndering);
 
 function Eventful(eventData) {
-    this.link  = eventData[0].link;                                                                                                                                               
-    this.name = eventData[0].name;
-    this.event_date = eventData[0].event_date;
-    this.summary = eventData[0].summary;
+    this.link  = eventData[0].url;                                                                                                                                               
+    this.name = eventData[0].title;
+    this.event_date = eventData[0].start_time;
+    this.summary = eventData[0].description;
 }
 
 function eventfulRndering(request, response) {
-    let city = request.query['city'];
+    let city = request.query.formatted_query;
     getEventfulData(city)
         .then((data) => {
             response.status(200).send(data);
@@ -95,10 +95,12 @@ function eventfulRndering(request, response) {
 }
 function getEventfulData(city) {
     const eventfulUrl = `http://api.eventful.com/json/events/search?app_key=${EVENTFUL_API_KEY}&location=${city}`;
+    // console.log(eventfulUrl)
     return superagent.get(eventfulUrl)
-    console.log(eventfulUrl)
-        .then((eventfilData) => {
-            const eventful = eventfilData.map((day) => new Eventful(eventfilData));
+    .then((eventfulData) => {
+        let jsonData = JSON.parse(eventfulData.text).events.event;
+        console.log(jsonData);
+        const eventful = jsonData.map((day) => new Eventful(jsonData));
 
             return eventful;
         });
